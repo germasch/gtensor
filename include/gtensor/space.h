@@ -166,7 +166,7 @@ using device_allocator = caching_allocator<T, thrust::device_allocator<T>>;
 struct device
 {
   template <typename T>
-  using Vector = thrust::device_vector<T, device_allocator<T>>;
+  using Vector = thrust::device_vector<T>;//, device_allocator<T>>;
   template <typename T>
   using Span = device_span<T>;
 };
