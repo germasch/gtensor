@@ -30,13 +30,11 @@ template <class T, class A>
 struct caching_allocator : A
 {
   using base_type = A;
-  using value_type = typename A::value_type;
-  using reference = typename A::reference;
-  using const_reference = typename A::const_reference;
-  using pointer = typename A::pointer;
-  using const_pointer = typename A::const_pointer;
-  using size_type = typename A::size_type;
-  using difference_type = typename A::difference_type;
+  using value_type = typename std::allocator_traits<A>::value_type;
+  using pointer = typename std::allocator_traits<A>::pointer;
+  using const_pointer = typename std::allocator_traits<A>::const_pointer;
+  using size_type = typename std::allocator_traits<A>::size_type;
+  using difference_type = typename std::allocator_traits<A>::difference_type;
 
   caching_allocator() {}
   caching_allocator(const caching_allocator&) {}
