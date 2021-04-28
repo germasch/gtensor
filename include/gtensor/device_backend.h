@@ -129,7 +129,7 @@ template <typename S_src, typename S_to>
 struct copy;
 
 template <>
-struct copy<space::device, space::device>
+struct copy<space::cuda, space::cuda>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -140,7 +140,7 @@ struct copy<space::device, space::device>
 };
 
 template <>
-struct copy<space::device, space::host>
+struct copy<space::cuda, space::host>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -150,7 +150,7 @@ struct copy<space::device, space::host>
 };
 
 template <>
-struct copy<space::host, space::device>
+struct copy<space::host, space::cuda>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -312,7 +312,7 @@ template <typename S_src, typename S_to>
 struct copy;
 
 template <>
-struct copy<space::device, space::device>
+struct copy<space::hip, space::hip>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -322,7 +322,7 @@ struct copy<space::device, space::device>
 };
 
 template <>
-struct copy<space::device, space::host>
+struct copy<space::hip, space::host>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -332,7 +332,7 @@ struct copy<space::device, space::host>
 };
 
 template <>
-struct copy<space::host, space::device>
+struct copy<space::host, space::hip>
 {
   template <typename T>
   static void run(const T* src, T* dst, size_type count)
@@ -423,7 +423,7 @@ struct host
 } // namespace gallocator
 
 template <typename T>
-using device_allocator = wrap_allocator<T, typename gallocator::device>;
+using device_allocator = wrap_allocator<T, typename gallocatorg>;
 
 template <typename T>
 using host_allocator = wrap_allocator<T, typename gallocator::host>;
