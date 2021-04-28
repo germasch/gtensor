@@ -132,18 +132,11 @@ inline bool operator!=(const caching_allocator<T, AT>& a,
 }
 
 #ifdef GTENSOR_HAVE_DEVICE
-#ifdef GTENSOR_USE_THRUST
 
-#if GTENSOR_DEVICE_CUDA && THRUST_VERSION <= 100903
 template <typename T>
 using device_allocator =
-  caching_allocator<T, thrust::device_malloc_allocator<T>>;
-#else
-template <typename T>
-using device_allocator = caching_allocator<T, thrust::device_allocator<T>>;
-#endif
+  caching_allocator<T, gt::backend::system::device_allocator<T>>;
 
-#endif
 #endif
 
 } // namespace allocator
@@ -187,7 +180,8 @@ struct device
 struct device
 {
   template <typename T>
-  using Vector = gt::backend::device_storage<T>;
+  using Vector =
+    gt::backend::device_storage<T, gt::allocator::device_allocator>;
   template <typename T>
   using Span = device_span<T>;
 };
