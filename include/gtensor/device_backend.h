@@ -26,6 +26,7 @@
 #endif // GTENSOR_HAVE_DEVICE
 
 #include "defs.h"
+#include "device_ptr.h"
 #include "macros.h"
 
 namespace gt
@@ -87,15 +88,28 @@ GT_INLINE auto device_pointer_cast(Pointer p)
 
 #else // using gt::backend::device_storage
 
-// define no-op device_pointer/raw ponter casts
-template <typename Pointer>
-GT_INLINE Pointer raw_pointer_cast(Pointer p)
+// FIXME
+template <typename T>
+GT_INLINE T* raw_pointer_cast(T* p)
 {
   return p;
 }
 
-template <typename Pointer>
-GT_INLINE Pointer device_pointer_cast(Pointer p)
+template <typename T>
+GT_INLINE T* raw_pointer_cast(gt::device_ptr<T> p)
+{
+  return p.get();
+}
+
+template <typename T>
+GT_INLINE gt::device_ptr<T> device_pointer_cast(T* p)
+{
+  return gt::device_ptr<T>(p);
+}
+
+// FIXME
+template <typename T>
+GT_INLINE gt::device_ptr<T> device_pointer_cast(device_ptr<T> p)
 {
   return p;
 }
@@ -104,14 +118,28 @@ GT_INLINE Pointer device_pointer_cast(Pointer p)
 
 // ======================================================================
 
-template <typename T, typename A>
+template <typename T, typename A, typename S>
 struct wrap_allocator
 {
   using value_type = T;
+  using pointer = gt::device_ptr<T>;
+  using const_pointer = gt::device_ptr<const T>;
   using size_type = gt::size_type;
 
-  T* allocate(size_type n) { return A::template allocate<T>(n); }
-  void deallocate(T* p, size_type n) { A::deallocate(p); }
+  pointer allocate(size_type n) { return pointer(A::template allocate<T>(n)); }
+  void deallocate(pointer p, size_type n) { A::deallocate(p.get()); }
+};
+
+template <typename T, typename A>
+struct wrap_allocator<T, A, gt::space::host>
+{
+  using value_type = T;
+  using pointer = T*;
+  using const_pointer = const T*;
+  using size_type = gt::size_type;
+
+  pointer allocate(size_type n) { return A::template allocate<T>(n); }
+  void deallocate(pointer p, size_type n) { A::deallocate(p); }
 };
 
 // ======================================================================
@@ -132,10 +160,10 @@ template <>
 struct copy<space::device, space::device>
 {
   template <typename T>
-  static void run(const T* src, T* dst, size_type count)
+  static void run(device_ptr<const T> src, device_ptr<T> dst, size_type count)
   {
-    gtGpuCheck(
-      cudaMemcpy(dst, src, sizeof(T) * count, cudaMemcpyDeviceToDevice));
+    gtGpuCheck(cudaMemcpy(dst.get(), src.get(), sizeof(T) * count,
+                          cudaMemcpyDeviceToDevice));
   }
 };
 
@@ -143,9 +171,18 @@ template <>
 struct copy<space::device, space::host>
 {
   template <typename T>
-  static void run(const T* src, T* dst, size_type count)
+  static void run(device_ptr<const T> src, T* dst, size_type count)
   {
-    gtGpuCheck(cudaMemcpy(dst, src, sizeof(T) * count, cudaMemcpyDeviceToHost));
+    gtGpuCheck(
+      cudaMemcpy(dst, src.get(), sizeof(T) * count, cudaMemcpyDeviceToHost));
+  }
+
+  // FIXME, duplicate for non-const
+  template <typename T>
+  static void run(device_ptr<T> src, T* dst, size_type count)
+  {
+    gtGpuCheck(
+      cudaMemcpy(dst, src.get(), sizeof(T) * count, cudaMemcpyDeviceToHost));
   }
 };
 
@@ -153,9 +190,10 @@ template <>
 struct copy<space::host, space::device>
 {
   template <typename T>
-  static void run(const T* src, T* dst, size_type count)
+  static void run(const T* src, device_ptr<T> dst, size_type count)
   {
-    gtGpuCheck(cudaMemcpy(dst, src, sizeof(T) * count, cudaMemcpyHostToDevice));
+    gtGpuCheck(
+      cudaMemcpy(dst.get(), src, sizeof(T) * count, cudaMemcpyHostToDevice));
   }
 };
 
@@ -171,8 +209,8 @@ struct copy<space::host, space::host>
 
 } // namespace detail
 
-template <typename S_src, typename S_to, typename T>
-inline void copy(const T* src, T* dst, gt::size_type count)
+template <typename S_src, typename S_to, typename P_src, typename P_dst>
+inline void copy(P_src src, P_dst dst, size_type count)
 {
   return detail::copy<S_src, S_to>::run(src, dst, count);
 }
@@ -243,10 +281,12 @@ struct host
 } // namespace gallocator
 
 template <typename T>
-using device_allocator = wrap_allocator<T, typename gallocator::device>;
+using device_allocator =
+  wrap_allocator<T, typename gallocator::device, space::device>;
 
 template <typename T>
-using host_allocator = wrap_allocator<T, typename gallocator::host>;
+using host_allocator =
+  wrap_allocator<T, typename gallocator::host, space::host>;
 
 inline void device_synchronize()
 {

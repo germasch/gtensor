@@ -134,8 +134,46 @@ private:
 
 #else // not GTENSOR_USE_THRUST
 
+// template <typename T>
+// using device_span = span<T>;
+
 template <typename T>
-using device_span = span<T>;
+class device_span
+{
+public:
+  using element_type = T;
+  using value_type = std::remove_cv_t<T>;
+
+  using pointer = gt::device_ptr<T>;
+  using const_pointer = gt::device_ptr<const T>;
+  using reference = T&;
+  using const_reference = const T&;
+  using size_type = gt::size_type;
+
+  device_span() = default;
+  GT_INLINE device_span(pointer data, size_type size) : data_{data}, size_{size}
+  {}
+
+  device_span(const device_span& other) = default;
+
+  template <class OtherT,
+            std::enable_if_t<
+              is_allowed_element_type_conversion<OtherT, T>::value, int> = 0>
+  GT_INLINE device_span(const device_span<OtherT>& other)
+    : data_{other.data()}, size_{other.size()}
+  {}
+
+  device_span& operator=(const device_span& other) = default;
+
+  GT_INLINE pointer data() const { return data_; }
+  GT_INLINE size_type size() const { return size_; }
+
+  GT_INLINE reference operator[](size_type i) const { return data_[i]; }
+
+private:
+  pointer data_;
+  size_type size_ = 0;
+};
 
 #endif // GTENSOR_USE_THRUST
 

@@ -115,8 +115,10 @@ inline gtensor_container<EC, N>::gtensor_container(
   if (std::is_same<space_type, space::device>::value) {
     gtensor<value_type, N, space::host> host_temp(shape);
     helper::nd_initializer_list_copy<N>(il, host_temp);
+    // FIXME, the space type comparison should be like constexpr if
     gt::backend::system::copy<space::host, space::device>(
-      host_temp.data(), base_type::data(), host_temp.size());
+      host_temp.data(), gt::backend::device_pointer_cast(base_type::data()),
+      host_temp.size());
   } else {
     helper::nd_initializer_list_copy<N>(il, (*this));
   }
