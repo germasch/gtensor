@@ -696,17 +696,10 @@ using namespace backend::host;
 #endif
 } // namespace clib
 
-template <typename T>
-GT_INLINE T* raw_pointer_cast(T* p)
+template <typename P>
+GT_INLINE auto raw_pointer_cast(P p)
 {
-  return p;
-}
-
-template <typename T>
-GT_INLINE T* raw_pointer_cast(
-  typename gt::space::space_traits<gt::space::device>::template pointer<T> p)
-{
-  return p.get();
+  return gt::pointer_traits<P>::get(p);
 }
 
 template <typename T>
