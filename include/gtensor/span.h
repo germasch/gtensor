@@ -4,10 +4,6 @@
 
 #include <cassert>
 
-#if __cplusplus >= 202000L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202000L)
-#include <span>
-#endif
-
 #include "defs.h"
 #include "macros.h"
 #include "pointer_traits.h"
