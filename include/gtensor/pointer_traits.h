@@ -40,7 +40,7 @@ struct pointer_traits<gt::device_ptr<T>>
   template <typename U>
   using rebind = gt::device_ptr<U>;
 
-  static pointer get(pointer p) { return p; }
+  static T* get(pointer p) { return p.get(); }
 };
 
 #ifdef GTENSOR_USE_THRUST
