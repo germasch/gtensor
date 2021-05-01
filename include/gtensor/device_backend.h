@@ -144,7 +144,7 @@ namespace detail
 
 template <typename T>
 using device_ptr =
-  typename gt::space::space_traits<gt::space::cuda>::template pointer<T>;
+  typename gt::space::space_traits<gt::space::device>::template pointer<T>;
 
 template <typename S_src, typename S_to>
 struct copy;
