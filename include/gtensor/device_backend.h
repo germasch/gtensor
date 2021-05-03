@@ -154,6 +154,11 @@ using namespace backend::host;
 #endif
 } // namespace clib
 
+} // namespace backend
+
+// ======================================================================
+// fill
+
 template <
   typename S, typename Ptr, typename T,
   std::enable_if_t<
@@ -161,10 +166,8 @@ template <
     int> = 0>
 void fill(Ptr first, Ptr last, const T& value)
 {
-  return fill_impl::fill(S{}, first, last, value);
+  return backend::fill_impl::fill(S{}, first, last, value);
 }
-
-} // namespace backend
 
 // ======================================================================
 // copy_n
