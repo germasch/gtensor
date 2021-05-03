@@ -16,6 +16,7 @@ namespace backend
 
 namespace allocator_impl
 {
+
 template <>
 struct gallocator<gt::space::cuda>
 {

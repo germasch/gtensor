@@ -114,14 +114,6 @@ struct selector
 
 } // namespace allocator_impl
 
-#if 0 // host handled generically
-template <typename T>
-struct selector<T, gt::space::host>
-{
-  using type =
-    wrap_allocator<T, gallocator<gt::space::cuda>::host, gt::space::host>;
-};
-#endif
 } // namespace backend
 
 } // namespace gt
@@ -161,7 +153,7 @@ using namespace backend::host;
 #endif
 
 template <typename S>
-using gallocator = backend::allocator_impl::gallocator<S>;
+using gallocator = gt::backend::allocator_impl::gallocator<S>;
 } // namespace clib
 
 } // namespace backend
