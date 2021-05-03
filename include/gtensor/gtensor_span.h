@@ -133,16 +133,14 @@ GT_INLINE gtensor_span<T, N, S>::gtensor_span(pointer data,
 #if defined(GTENSOR_DEVICE_CUDA) && !defined(__CUDACC__)
   if (std::is_same<S, space::device>::value) {
     cudaPointerAttributes attr;
-    gtGpuCheck(
-      cudaPointerGetAttributes(&attr, gt::backend::raw_pointer_cast(data)));
+    gtGpuCheck(cudaPointerGetAttributes(&attr, gt::raw_pointer_cast(data)));
     assert(attr.type == cudaMemoryTypeDevice ||
            attr.type == cudaMemoryTypeManaged);
   }
 #elif defined(GTENSOR_DEVICE_HIP)
   if (std::is_same<S, space::device>::value) {
     hipPointerAttribute_t attr;
-    gtGpuCheck(
-      hipPointerGetAttributes(&attr, gt::backend::raw_pointer_cast(data)));
+    gtGpuCheck(hipPointerGetAttributes(&attr, gt::raw_pointer_cast(data)));
     assert(attr.memoryType == hipMemoryTypeDevice || attr.isManaged);
   }
 #endif
@@ -162,7 +160,7 @@ template <typename T, size_type N, typename S>
 inline void gtensor_span<T, N, S>::fill(const value_type v)
 {
   if (v == T(0)) {
-    auto data = gt::backend::raw_pointer_cast(this->data());
+    auto data = gt::raw_pointer_cast(this->data());
     backend::fill<S>(data, data + this->size(), 0);
   } else {
     assign(*this, scalar(v));
@@ -222,8 +220,8 @@ template <size_type N, typename T>
 GT_INLINE gtensor_span<T, N, space::device> adapt_device(
   T* data, const shape_type<N>& shape)
 {
-  return gtensor_span<T, N, space::device>(
-    gt::backend::device_pointer_cast(data), shape, calc_strides(shape));
+  return gtensor_span<T, N, space::device>(gt::device_pointer_cast(data), shape,
+                                           calc_strides(shape));
 }
 
 template <size_type N, typename T>

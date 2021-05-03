@@ -94,7 +94,7 @@ template <typename D>
 inline void gcontainer<D>::fill(const value_type v)
 {
   if (v == value_type(0)) {
-    auto data = gt::backend::raw_pointer_cast(this->data());
+    auto data = gt::raw_pointer_cast(this->data());
     backend::fill<expr_space_type<D>>(data, data + this->size(), 0);
   } else {
     assign(derived(), scalar(v));

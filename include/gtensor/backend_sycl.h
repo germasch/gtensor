@@ -133,7 +133,7 @@ template <typename InputPtr, typename OutputPtr>
 inline void sycl_copy_n(InputPtr in, size_type count, OutputPtr out)
 {
   cl::sycl::queue& q = gt::backend::sycl::get_queue();
-  q.memcpy(backend::raw_pointer_cast(dst), backend::raw_pointer_cast(src),
+  q.memcpy(gt::raw_pointer_cast(dst), gt::raw_pointer_cast(src),
            sizeof(typename gt::pointer_traits<InputPtr>::element_type) * count);
   q.wait();
 }
@@ -170,7 +170,7 @@ inline void fill(gt::space::sycl tag, Ptr first, Ptr last, const T& value)
 {
   assert(value == T(0) || sizeof(T) == 1);
   cl::sycl::queue& q = gt::backend::sycl::get_queue();
-  q.memset(backend::raw_pointer_cast(dst), value, last - first);
+  q.memset(gt::raw_pointer_cast(dst), value, last - first);
 }
 } // namespace fill_impl
 

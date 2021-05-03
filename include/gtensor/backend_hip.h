@@ -149,7 +149,7 @@ inline void copy_n(gt::space::hip tag_in, gt::space::hip tag_out, InputPtr in,
                    size_type count, OutputPtr out)
 {
   gtGpuCheck(hipMemcpy(
-    backend::raw_pointer_cast(out), backend::raw_pointer_cast(in),
+    gt::raw_pointer_cast(out), gt::raw_pointer_cast(in),
     sizeof(typename gt::pointer_traits<InputPtr>::element_type) * count,
     hipMemcpyDeviceToDevice));
 }
@@ -159,7 +159,7 @@ inline void copy_n(gt::space::hip tag_in, gt::space::host tag_out, InputPtr in,
                    size_type count, OutputPtr out)
 {
   gtGpuCheck(hipMemcpy(
-    backend::raw_pointer_cast(out), backend::raw_pointer_cast(in),
+    gt::raw_pointer_cast(out), gt::raw_pointer_cast(in),
     sizeof(typename gt::pointer_traits<InputPtr>::element_type) * count,
     hipMemcpyDeviceToHost));
 }
@@ -169,7 +169,7 @@ inline void copy_n(gt::space::host tag_in, gt::space::hip tag_out, InputPtr in,
                    size_type count, OutputPtr out)
 {
   gtGpuCheck(hipMemcpy(
-    backend::raw_pointer_cast(out), backend::raw_pointer_cast(in),
+    gt::raw_pointer_cast(out), gt::raw_pointer_cast(in),
     sizeof(typename gt::pointer_traits<InputPtr>::element_type) * count,
     hipMemcpyHostToDevice));
 }
@@ -180,7 +180,7 @@ inline void copy_n(gt::space::host tag_in, gt::space::host tag_out, InputPtr in,
                    size_type count, OutputPtr out)
 {
   gtGpuCheck(hipMemcpy(
-    backend::raw_pointer_cast(out), backend::raw_pointer_cast(in),
+    gt::raw_pointer_cast(out), gt::raw_pointer_cast(in),
     sizeof(typename gt::pointer_traits<InputPtr>::element_type) * count,
     hipMemcpyHostToHost));
 }
@@ -194,7 +194,7 @@ template <typename Ptr, typename T>
 inline void fill(gt::space::hip tag, Ptr first, Ptr last, const T& value)
 {
   assert(value == T(0) || sizeof(T) == 1);
-  gtGpuCheck(hipMemset(backend::raw_pointer_cast(first), value, last - first));
+  gtGpuCheck(hipMemset(gt::raw_pointer_cast(first), value, last - first));
 }
 } // namespace fill_impl
 
