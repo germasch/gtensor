@@ -36,34 +36,36 @@ uint32_t gt_backend_device_get_vendor_id(int device_id)
 
 void* gt_backend_host_allocate(size_t nbytes)
 {
-  return (void*)gt::backend::clib::gallocator::host::allocate<uint8_t>(nbytes);
+  return (void*)
+    gt::backend::clib::gallocator<gt::space::host>::allocate<uint8_t>(nbytes);
 }
 
 void* gt_backend_device_allocate(size_t nbytes)
 {
-  return (void*)gt::backend::clib::gallocator::device::allocate<uint8_t>(
-    nbytes);
+  return (void*)
+    gt::backend::clib::gallocator<gt::space::device>::allocate<uint8_t>(nbytes);
 }
 
 void* gt_backend_managed_allocate(size_t nbytes)
 {
-  return (void*)gt::backend::clib::gallocator::managed::allocate<uint8_t>(
-    nbytes);
+  return (void*)
+    gt::backend::clib::gallocator<gt::space::managed>::allocate<uint8_t>(
+      nbytes);
 }
 
 void gt_backend_host_deallocate(void* p)
 {
-  gt::backend::clib::gallocator::host::deallocate((uint8_t*)p);
+  gt::backend::clib::gallocator<gt::space::host>::deallocate((uint8_t*)p);
 }
 
 void gt_backend_device_deallocate(void* p)
 {
-  gt::backend::clib::gallocator::device::deallocate((uint8_t*)p);
+  gt::backend::clib::gallocator<gt::space::device>::deallocate((uint8_t*)p);
 }
 
 void gt_backend_managed_deallocate(void* p)
 {
-  gt::backend::clib::gallocator::managed::deallocate((uint8_t*)p);
+  gt::backend::clib::gallocator<gt::space::managed>::deallocate((uint8_t*)p);
 }
 
 void gt_backend_memcpy_hh(void* dst, const void* src, size_t nbytes)
