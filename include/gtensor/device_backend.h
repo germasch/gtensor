@@ -160,13 +160,14 @@ using namespace backend::host;
 // fill
 
 template <
-  typename S, typename Ptr, typename T,
+  typename Ptr, typename T,
   std::enable_if_t<
     std::is_convertible<T, typename pointer_traits<Ptr>::element_type>::value,
     int> = 0>
 void fill(Ptr first, Ptr last, const T& value)
 {
-  return backend::fill_impl::fill(S{}, first, last, value);
+  return backend::fill_impl::fill(typename pointer_traits<Ptr>::space_type{},
+                                  first, last, value);
 }
 
 // ======================================================================
