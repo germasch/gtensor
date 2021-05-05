@@ -139,6 +139,13 @@ inline void sycl_copy_n(InputPtr in, size_type count, OutputPtr out)
 }
 
 template <typename InputPtr, typename OutputPtr>
+inline void copy_n(gt::space::sycl tag_in, gt::space::sycl tag_out, InputPtr in,
+                   size_type count, OutputPtr out)
+{
+  sycl_copy_n(in, count, out);
+}
+
+template <typename InputPtr, typename OutputPtr>
 inline void copy_n(gt::space::sycl tag_in, gt::space::host tag_out, InputPtr in,
                    size_type count, OutputPtr out)
 {
