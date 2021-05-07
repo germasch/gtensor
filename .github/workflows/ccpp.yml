@@ -20,7 +20,8 @@ jobs:
         clangFormatVersion: 9
 
   tests-cpu:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    container: ubuntu-18.04
     strategy:
       matrix:
         cxx: [ 'g++-7', 'g++-9', 'clang++-9' ]
