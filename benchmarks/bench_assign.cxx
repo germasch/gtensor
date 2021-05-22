@@ -13,7 +13,7 @@ using complex_t = gt::complex<double>;
 
 static void BM_device_assign_4d(benchmark::State& state)
 {
-  auto a = gt::zeros_device<real_t>(gt::shape(10, 10, 10, 10));
+  auto a = gt::zeros_device<real_t>(gt::shape(100, 100, 100, 100));
   auto b = gt::empty_like(a);
 
   for (auto _ : state) {
@@ -40,7 +40,7 @@ auto i_sten_6d_5(const gt::gtensor_span<const real_t, 1>& sten,
 static void BM_add_ij_sten(benchmark::State& state)
 {
   const int bnd = 2; // # of ghost points
-  auto shape_rhs = gt::shape(10, 12, 14, 16, 18, 2);
+  auto shape_rhs = gt::shape(70, 32, 24, 24, 32, 2);
   auto shape_dist = shape_rhs;
   shape_dist[0] += 2 * bnd;
 
@@ -87,7 +87,7 @@ auto y_deriv(const gt::gtensor_span_device<const complex_t, 3>& f,
 static void BM_add_dgdxy(benchmark::State& state)
 {
   const int bnd = 2; // # of ghost points
-  auto shape_rhs = gt::shape(10, 12, 14 * 16 * 18);
+  auto shape_rhs = gt::shape(70, 32, 24 * 24 * 32 * 2);
   auto shape_f = shape_rhs;
   shape_f[0] += 2 * bnd;
 
@@ -121,7 +121,7 @@ BENCHMARK(BM_add_dgdxy)->Unit(benchmark::kMillisecond);
 static void BM_add_dgdxy_fused(benchmark::State& state)
 {
   const int bnd = 2; // # of ghost points
-  auto shape_rhs = gt::shape(10, 12, 14 * 16 * 18);
+  auto shape_rhs = gt::shape(70, 32, 24 * 24 * 32 * 2);
   auto shape_f = shape_rhs;
   shape_f[0] += 2 * bnd;
 
